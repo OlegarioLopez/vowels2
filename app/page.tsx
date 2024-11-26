@@ -9,17 +9,28 @@ export default function VowelLearner() {
   const [transitioning, setTransitioning] = useState(false)
   const [totalAttempts, setTotalAttempts] = useState(0)
   const [correctAttempts, setCorrectAttempts] = useState(0)
+  const [error, setError] = useState<string | null>(null)
 
   const fetchWord = useCallback(async () => {
     setTransitioning(true)
+    setError(null)
     setTimeout(async () => {
       setLoading(true)
-      const response = await fetch('https://random-word-api.herokuapp.com/word')
-      const [newWord] = await response.json()
-      setWord(newWord)
-      setLoading(false)
-      setTransitioning(false)
-    }, 500) // Delay to allow exit animation
+      try {
+        const response = await fetch('/api/get-word')
+        if (!response.ok) {
+          throw new Error('Failed to fetch word')
+        }
+        const data = await response.json()
+        setWord(data.word.toLowerCase())
+      } catch (err) {
+        setError('Failed to load word. Please try again.')
+        console.error(err)
+      } finally {
+        setLoading(false)
+        setTransitioning(false)
+      }
+    }, 500)
   }, [])
 
   useEffect(() => {
@@ -56,15 +67,25 @@ export default function VowelLearner() {
       <div className={styles.wordContainer}>
         {loading ? (
           <div className={styles.loading}></div>
+        ) : error ? (
+          <p className={styles.error}>{error}</p>
         ) : (
           <p className={`${styles.word} ${transitioning ? styles.exit : styles.enter}`}>{word}</p>
         )}
       </div>
       <div className={styles.buttonContainer}>
-        <button onClick={() => handleAttempt(true)} className={`${styles.button} ${styles.successButton}`}>
+        <button 
+          onClick={() => handleAttempt(true)} 
+          className={`${styles.button} ${styles.successButton}`}
+          disabled={loading || !!error}
+        >
           Acierto
         </button>
-        <button onClick={() => handleAttempt(false)} className={`${styles.button} ${styles.failButton}`}>
+        <button 
+          onClick={() => handleAttempt(false)} 
+          className={`${styles.button} ${styles.failButton}`}
+          disabled={loading || !!error}
+        >
           Fallo
         </button>
       </div>
