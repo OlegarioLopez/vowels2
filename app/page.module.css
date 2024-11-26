@@ -1,0 +1,113 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(45deg, #5e6b9e 0%, #9b8da5 100%);
+  font-family: Arial, sans-serif;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 2rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.wordContainer {
+  background-color: white;
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+  min-width: 300px;
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.word {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+}
+
+.loading {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #5e6b9e;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.buttonContainer {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.button {
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.successButton {
+  background-color: #7cb342;
+  color: white;
+}
+
+.failButton {
+  background-color: #e53935;
+  color: white;
+}
+
+.button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.successRate {
+  font-size: 1.2rem;
+  color: white;
+  margin-top: 1rem;
+}
+
+.enter {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.exit {
+  animation: fadeOut 0.5s ease-in;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-20px); }
+}
+
