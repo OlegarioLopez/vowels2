@@ -5,6 +5,15 @@ build/
 .nyc_output/
 coverage/
 *.log
+package-lock.json
+yarn.lock
+
+# Next.js
+.next/
+out/
+.vercel/
+.swc/
+next-env.d.ts
 
 # Environment variables
 .env
