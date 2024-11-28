@@ -54,7 +54,7 @@ export default function VowelLearner() {
           // Delay para animar la vocal
           setTimeout(() => {
             setActiveVowelIndex(word.indexOf(vowel, index === 0 ? 0 : word.indexOf(vowels[index - 1]) + 1))
-            setTimeout(() => setActiveVowelIndex(null), 300)
+            setTimeout(() => setActiveVowelIndex(null), 900)
           }, 200) // Añadido un delay de 200ms
         }, delay)
         delay += 1000
@@ -80,7 +80,7 @@ export default function VowelLearner() {
             onClick={() => setHasInteracted(true)} 
             className={styles.button}
           >
-            Habilitar Sonidos
+            Start Spelling the fucking V*wels
           </button>
         </div>
       ) : (
@@ -112,17 +112,17 @@ export default function VowelLearner() {
               className={`${styles.button} ${styles.successButton}`}
               disabled={loading || !!error}
             >
-              Acierto
+              Success
             </button>
             <button 
               onClick={() => handleAttempt(false)} 
               className={`${styles.button} ${styles.failButton}`}
               disabled={loading || !!error}
             >
-              Fallo
+              Fail
             </button>
           </div>
-          <p className={styles.successRate}>Porcentaje de aciertos: {successRate}%</p>
+          <p className={styles.successRate}>Percentage of hits: {successRate}%</p>
         </>
       )}
     </div>
