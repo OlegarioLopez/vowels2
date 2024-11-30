@@ -1,31 +1,27 @@
-import OpenAI from 'openai';
+import { MongoClient } from 'mongodb';
 import { NextResponse } from 'next/server';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const uri = process.env.MONGODB_URI;
+const client = new MongoClient(uri);
 
 export async function GET() {
   try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        { role: "system", content: "You are a helpful assistant that provides single, random English words." },
-        { role: "user", content: "Give me a random English word." }
-      ],
-      max_tokens: 10,
-    });
+    await client.connect();
+    const database = client.db('vowel_learner');
+    const words = database.collection('words');
 
-    const word = completion.choices[0].message.content?.trim();
+    const randomWord = await words.aggregate([{ $sample: { size: 1 } }]).toArray();
 
-    if (!word) {
-      throw new Error('No word generated');
+    if (randomWord.length === 0) {
+      throw new Error('No word found');
     }
 
-    return NextResponse.json({ word });
+    return NextResponse.json({ word: randomWord[0].word });
   } catch (error) {
-    console.error('Error generating word:', error);
-    return NextResponse.json({ error: 'Failed to generate word' }, { status: 500 });
+    console.error('Error fetching word:', error);
+    return NextResponse.json({ error: 'Failed to fetch word' }, { status: 500 });
+  } finally {
+    await client.close();
   }
 }
 
