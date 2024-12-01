@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import styles from './page.module.css'
 
+const VOWELS = ['a', 'e', 'i', 'o', 'u'];
+
 export default function VowelLearner() {
   const [word, setWord] = useState('')
   const [loading, setLoading] = useState(true)
@@ -12,7 +14,24 @@ export default function VowelLearner() {
   const [error, setError] = useState<string | null>(null)
   const [activeVowelIndex, setActiveVowelIndex] = useState<number | null>(null)
   const [hasInteracted, setHasInteracted] = useState(false)
+  const [audioLoaded, setAudioLoaded] = useState(false)
   const wordRef = useRef<HTMLParagraphElement>(null)
+  const audioRefs = useRef<{ [key: string]: HTMLAudioElement }>({})
+
+  useEffect(() => {
+    // Preload audio files
+    let loadedCount = 0;
+    VOWELS.forEach((vowel) => {
+      const audio = new Audio(`/${vowel.toUpperCase()}.mp3`);
+      audio.addEventListener('canplaythrough', () => {
+        loadedCount++;
+        if (loadedCount === VOWELS.length) {
+          setAudioLoaded(true);
+        }
+      });
+      audioRefs.current[vowel] = audio;
+    });
+  }, []);
 
   const fetchWord = useCallback(async () => {
     setTransitioning(true)
@@ -46,10 +65,13 @@ export default function VowelLearner() {
       let delay = 0
       vowels.forEach((vowel, index) => {
         setTimeout(() => {
-          const audio = new Audio(`/${vowel.toUpperCase()}.mp3`)
-          audio.play().catch((err) => {
-            console.error('Audio playback failed:', err)
-          })
+          const audio = audioRefs.current[vowel.toLowerCase()];
+          if (audio) {
+            audio.currentTime = 0; // Reset audio to start
+            audio.play().catch((err) => {
+              console.error('Audio playback failed:', err)
+            })
+          }
 
           // Delay para animar la vocal
           setTimeout(() => {
@@ -71,6 +93,17 @@ export default function VowelLearner() {
   }
 
   const successRate = totalAttempts > 0 ? Math.round((correctAttempts / totalAttempts) * 100) : 0
+
+  if (!audioLoaded) {
+    return (
+      <div className={styles.container}>
+  <div className={styles.spinner}>
+    <span className={styles.text}>Loading...</span>
+    <div className={styles.loading}></div>
+  </div>
+</div>
+    )
+  }
 
   return (
     <div className={styles.container}>
